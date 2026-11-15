@@ -1,39 +1,78 @@
-x# code
-5
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Simple Bootstrap Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from time import sleep 
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+class InvalidLoginTest:
+    def __init__(self):
+        options = Options()
+        options.add_argument("--start-maximized")
+        self.driver = webdriver.Chrome(service=Service(), options=options)
 
-<body>
+    def login(self, username, password):
+        self.driver.get("https://www.saucedemo.com/")
 
-<!-- Navbar -->
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <span class="navbar-brand">My Site</span>
-    </div>
-</nav>
+        username_field = self.driver.find_element(By.XPATH, "//input[@id='user-name']")
+        username_field.send_keys(username)
 
-<!-- Content -->
-<div class="container text-center mt-4">
-    <h2 class="text-primary">Welcome</h2>
+        sleep(3)
 
-    <!-- Buttons -->
-    <button class="btn btn-primary">Primary</button>
-    <button class="btn btn-success">Success</button>
+        password_field = self.driver.find_element(By.XPATH, "//input[@id='password']")
+        password_field.send_keys(password)
 
-    <!-- Form -->
-    <form class="mt-3">
-        <input type="text" class="form-control mb-2" placeholder="Enter Name">
-        <input type="email" class="form-control mb-2" placeholder="Enter Email">
-        <button class="btn btn-danger">Submit</button>
-    </form>
-</div>
+        sleep(5)
 
-</body>
-</html>
+        login_button = self.driver.find_element(By.XPATH, "//input[@id='login-button']")
+        login_button.click()
+
+        sleep(5)
+
+        print("Invalid username and password.")
+
+    def close(self):
+        self.driver.quit()
+
+
+class ValidLoginTest:
+    def __init__(self):
+        options = Options()
+        options.add_argument("--start-maximized")
+        self.driver = webdriver.Chrome(service=Service(), options=options)
+
+    def login(self, username, password):
+        self.driver.get("https://www.saucedemo.com/")
+
+        username_field = self.driver.find_element(By.XPATH, "//input[@id='user-name']")
+        username_field.send_keys(username)
+
+        sleep(3)
+
+        password_field = self.driver.find_element(By.XPATH, "//input[@id='password']")
+        password_field.send_keys(password)
+
+        sleep(5)
+
+        login_button = self.driver.find_element(By.XPATH, "//input[@id='login-button']")
+        login_button.click()
+
+        sleep(5)
+
+        if "inventory.html" in self.driver.current_url:
+            print("Valid username/password test passed.")
+        else:
+            print("Valid username/password test failed.")
+
+    def close(self):
+        self.driver.quit()
+
+
+if __name__ == "__main__":
+    invalid_test = InvalidLoginTest()
+    invalid_test.login("invalid_user", "wrong_password")
+    invalid_test.close()
+
+    valid_test = ValidLoginTest()
+    valid_test.login("standard_user", "secret_sauce")
+    valid_test.close()
